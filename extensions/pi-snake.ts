@@ -260,12 +260,14 @@ function tick(state: GameState): void {
     }
   }
 
-  // Magnet: pull food closer
+  // Magnet: pull food closer (skip if target is wall/snake)
   if (state.magnetMode > 0) {
     const dx = Math.sign(newHead.x - state.food.x);
     const dy = Math.sign(newHead.y - state.food.y);
     const fx = state.food.x + dx, fy = state.food.y + dy;
-    if (fx >= 0 && fx < W && fy >= 0 && fy < H) { state.food.x = fx; state.food.y = fy; }
+    if (fx >= 0 && fx < W && fy >= 0 && fy < H && !posIn({ x: fx, y: fy }, state.walls) && !posIn({ x: fx, y: fy }, state.snake)) {
+      state.food.x = fx; state.food.y = fy;
+    }
   }
 
   if (!ate) state.snake.pop(); // remove tail unless we ate
@@ -304,6 +306,7 @@ class SnakeComponent {
 
   private scheduleNext() {
     if (this.timer) clearTimeout(this.timer);
+    if (this.state.gameOver) return; // stop ticking
     this.timer = setTimeout(() => {
       if (!this.paused && !this.state.gameOver) {
         tick(this.state);
@@ -336,6 +339,7 @@ class SnakeComponent {
         const hs = this.state.highScore;
         this.state = createState(mode, skin);
         this.state.highScore = hs;
+        this.scheduleNext(); // restart timer
         this.version++;
         this.tui.requestRender();
       }
