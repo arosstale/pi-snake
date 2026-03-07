@@ -1,6 +1,6 @@
 {
   "name": "pi-snake",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Terminal Snake game for pi — classic arcade with audio-reactive visuals and power-ups",
   "pi-extension": "extensions/pi-snake.ts",
   "keywords": [
